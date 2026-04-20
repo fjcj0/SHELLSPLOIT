@@ -46,5 +46,9 @@ cd server || { echo "server folder not found"; exit 1; }
 npm install
 echo "Installing Python dependencies..."
 cd ..
-pip3 install -r requirements.txt
+if [ "$OS" = "Darwin" ]; then
+  pip3 install -r requirements.txt
+elif [ "$OS" = "Linux" ]; then
+  pip3 install -r requirements.txt --break-system-packages
+fi
 echo "Setup complete!"
