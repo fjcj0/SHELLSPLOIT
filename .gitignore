@@ -1,0 +1,7 @@
+.env
+dist
+build
+server/node_modules
+__pycache__
+build_log.txt
+sessions.json

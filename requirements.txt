@@ -1,0 +1,8 @@
+opencv-python
+websockets
+websocket-client
+geocoder
+gps
+Pillow
+scipy
+sounddevice
