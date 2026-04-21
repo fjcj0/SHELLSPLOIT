@@ -92,6 +92,8 @@ def reverse_shell():
                         print("[-] Not active")
                 except:
                     print("use <port>")
+            elif cmd == "clear" or cmd == "cls":
+                os.system('cls' if os.name == 'nt' else 'clear')
             elif cmd == "sessions":
                 print("\n--- STATUS ---")
                 for p in sorted(listeners.keys()):
