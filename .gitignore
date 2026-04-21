@@ -8,3 +8,4 @@ sessions.json
 example.txt
 .env
 payload.spec
+hooks/__pycache__
