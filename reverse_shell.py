@@ -1,4 +1,4 @@
-def reverse_shell():
+def main():
     import socket
     import threading
     import sys
@@ -81,7 +81,7 @@ def reverse_shell():
         nonlocal active_port
         while True:
             try:
-                cmd = input(f"(session:{active_port}) > ").strip()
+                cmd = input("shellsploit > ").strip()
             except:
                 break
             if cmd.startswith("use"):
@@ -131,4 +131,4 @@ def reverse_shell():
         sessions.clear()
         save_sessions()
 if __name__ == "__main__":
-    reverse_shell()
+    main()
