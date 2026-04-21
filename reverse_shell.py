@@ -51,7 +51,7 @@ def reverse_shell():
                     break
                 msg = data.decode(errors="ignore").rstrip()
                 if active_port == port:
-                    print(msg, end="")
+                    print(msg)
             except:
                 break
         print(f"\n[-] Disconnected from port {port}")
