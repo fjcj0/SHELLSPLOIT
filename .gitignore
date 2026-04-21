@@ -9,3 +9,4 @@ example.txt
 .env
 payload.spec
 hooks/__pycache__
+.DS_Store
