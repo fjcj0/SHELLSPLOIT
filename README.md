@@ -1,5 +1,3 @@
-# SELLSPLOIT🚀
-
 ![Project Logo](public/logo.png)
 
 > ⚠️ **Disclaimer:** This project is for **educational purposes and ethical hacking labs only**. Unauthorized access to computer systems is illegal. Use this tool responsibly and only on systems you own or have explicit permission to test. 🚫
@@ -63,7 +61,11 @@ This is an advanced Python-based **Multi-Session Reverse Shell Manager**. Unlike
 
 ---
 
-*** You can run `main.py` file also to customize your payload from the interface ***
+`Or you can easily customize your payload using the provided interface just run this command`
+
+```bash
+python3 main.py
+```
 
 ![Project Logo](public/cus.png)
 
