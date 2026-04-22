@@ -1,4 +1,4 @@
-# 🛡️ Multi-Session Reverse Shell Manager 🚀
+# SELLSPLOIT🚀
 
 ![Project Logo](public/logo.png)
 
@@ -63,6 +63,11 @@ This is an advanced Python-based **Multi-Session Reverse Shell Manager**. Unlike
 
 ---
 
+*** You can run `main.py` file also to customize your payload from the interface ***
+
+![Project Logo](public/cus.png)
+
+---
 ## 🚀 Usage & Listeners
 
 1. Start the Reverse Shell Listener
@@ -76,7 +81,7 @@ Navigate to the server folder and run the Node.js servers matching the ports in 
 cd server
 npm run dev 2020 2021 3030
 ```
-## ⌨️ Control Interface (shellsploit >)
+## ⌨️ Control Interface `(shellsploit >)`
 
 | Command        | Action                                                                 |
 |----------------|------------------------------------------------------------------------|
@@ -86,11 +91,8 @@ npm run dev 2020 2021 3030
 | clear          | 🧹 Clears the terminal screen.                                         |
 | exit           | 🚪 Shuts down the manager and resets sessions.                         |
 
-<p align="center">
-<b>Developed for Ethical Learning 🎓</b>
-<i>Check your local laws before testing!</i>
-</p>
-
 ---
+
+# Example
 
 ![Project Logo](public/example.png)
