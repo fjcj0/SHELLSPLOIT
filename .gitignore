@@ -6,7 +6,7 @@ __pycache__
 build_log.txt
 sessions.json
 example.txt
-.env
 payload.spec
 hooks/__pycache__
 .DS_Store
+env
