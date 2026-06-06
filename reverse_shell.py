@@ -103,7 +103,7 @@ def reverse_shell():
                         print("[-] Not active")
                 except:
                     print("use <port>")
-            elif cmd.lower("gui"):
+            elif cmd.lower() == "gui":
                 if active_port:
                     start_live_view(sessions[active_port])
             elif cmd == "clear" or cmd == "cls":
