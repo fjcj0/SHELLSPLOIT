@@ -14,6 +14,7 @@ from PIL import ImageGrab
 import threading
 from scipy.io.wavfile import write
 import sounddevice as sd
+import base64
 import sys
 import webbrowser
 import time
