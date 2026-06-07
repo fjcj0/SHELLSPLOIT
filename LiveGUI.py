@@ -63,21 +63,21 @@ class LiveVictimGUI:
                     if not data:
                         break
                     buffer += data
-                    start_marker = b"LIVE_START\n"
-                    end_marker = b"\nLIVE_END"
-                    while start_marker in buffer and end_marker in buffer:
-                        start_idx = buffer.find(start_marker)
-                        end_idx = buffer.find(end_marker, start_idx)
-                        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
-                            img_start = start_idx + len(start_marker)
-                            img_data = buffer[img_start:end_idx]
-                            buffer = buffer[end_idx + len(end_marker):]
+                    while "LIVE_START" in buffer and "LIVE_END" in buffer:
                             try:
-                                img_bytes = base64.b64decode(img_data)
-                                image = Image.open(io.BytesIO(img_bytes))
-                                image = image.resize((850, 600), Image.Resampling.LANCZOS)
-                                photo = ImageTk.PhotoImage(image)
-                                self.root.after(0, self.update_image, photo)
+                                start = buffer.find("LIVE_START")
+                                end = buffer.find("LIVE_END", start)
+                                if start != -1 and end != -1:
+                                    img_part = buffer[start + 11:end]
+                                    buffer = buffer[end + 9:]
+                                    try:
+                                        img_data = base64.b64decode(img_part)
+                                        image = Image.open(io.BytesIO(img_data))
+                                        image = image.resize((850, 600), Image.Resampling.LANCZOS)
+                                        photo = ImageTk.PhotoImage(image)
+                                        self.root.after(0, self.update_image, photo)
+                                    except Exception as e:
+                                        print(str(e))
                             except Exception as e:
                                 print(f"[DEBUG] Image decode error: {e}")
                                 continue

