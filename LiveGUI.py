@@ -65,10 +65,12 @@ class LiveVictimGUI:
                     buffer += data
                     while "LIVE_START" in buffer and "LIVE_END" in buffer:
                             try:
-                                start = buffer.find("LIVE_START")
-                                end = buffer.find("LIVE_END", start)
+                                marker_start = b"LIVE_START\n"
+                                marker_end = b"\nLIVE_END"
+                                start = buffer.find(marker_start)
+                                end = buffer.find(marker_end, start)
                                 if start != -1 and end != -1:
-                                    img_part = buffer[start + 11:end]
+                                    img_part = buffer[start + len(marker_start):end]
                                     buffer = buffer[end + 9:]
                                     try:
                                         img_data = base64.b64decode(img_part)
