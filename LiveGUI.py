@@ -85,7 +85,7 @@ class LiveVictimGUI:
         try:
             self.canvas.delete("all")
             self.canvas.create_image(425, 300, image=photo, anchor='center')
-            self.canvas.image = photo  # Keep reference
+            self.canvas.image = photo 
         except:
             pass
     def stop_view(self):
