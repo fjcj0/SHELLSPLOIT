@@ -56,7 +56,6 @@ def reverse_shell():
                     pass
             sessions[port] = client
             save_sessions()
-        client.settimeout(0.1)
         while True:
             try:
                 data = client.recv(4096)

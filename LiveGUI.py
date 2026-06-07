@@ -53,7 +53,6 @@ class LiveVictimGUI:
         buffer = ""
         while self.running:
             try:
-                self.client.settimeout(0.1)
                 data = self.client.recv(65536).decode('utf-8', errors='ignore')
                 if not data:
                     break
