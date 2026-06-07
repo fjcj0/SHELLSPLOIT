@@ -10,3 +10,4 @@ payload.spec
 hooks/__pycache__
 .DS_Store
 env
+payload_temp.py
