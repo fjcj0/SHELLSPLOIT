@@ -56,7 +56,7 @@ def reverse_shell():
                     continue
                 else:
                     msg = data.decode(errors="ignore").rstrip()
-                    if msg and "LIVE_START" not in msg and "LIVE_END" not in msg:
+                    if msg and "LIVE_START" not in msg and "LIVE_END" not in msg and active_port:
                         print(msg)
             except socket.timeout:
                 continue
